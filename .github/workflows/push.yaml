@@ -5,33 +5,67 @@ on:
     - master
 
 jobs:
-  build:
+  build_productpage:
     runs-on: ubuntu-latest 
     steps:
     - uses: actions/checkout@v1
-    - name: Build Productpage
+    - name: Build 
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
         docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/productpage:$sha $GITHUB_WORKSPACE/samples/bookinfo/src/productpage
-    - name: Push Productpage
+    - name: Push 
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
         docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
         docker push docker.pkg.github.com/$GITHUB_REPOSITORY/productpage:$sha
-    - name: Build Ratings
+  build_ratings:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build 
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
         docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/ratings:$sha $GITHUB_WORKSPACE/samples/bookinfo/src/ratings
-    - name: Push Ratings
+    - name: Push 
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
         docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
         docker push docker.pkg.github.com/$GITHUB_REPOSITORY/ratings:$sha
-        
+  build_details:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/details:$sha $GITHUB_WORKSPACE/samples/bookinfo/src/details
+    - name: Push 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
+        docker push docker.pkg.github.com/$GITHUB_REPOSITORY/details:$sha
+  build_reviews:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        cd $GITHUB_WORKSPACE/samples/bookinfo/src/reviews && gradle build
+        docker build -t docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha $GITHUB_WORKSPACE/samples/bookinfo/src/reviews/reviews-wlpcfg
+    - name: Push 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
+        docker push docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha
         
 #   deploy:
 #     runs-on: ubuntu-latest
