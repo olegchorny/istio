@@ -100,22 +100,26 @@ jobs:
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
-        kubectl create deployment $app --image=docker.pkg.github.com/$GITHUB_REPOSITORY/productpage:$sha --dry-run -o yaml | kubectl apply -f -    
+        kubectl create deployment productpage --image=docker.pkg.github.com/$GITHUB_REPOSITORY/productpage:$sha --dry-run -o yaml | kubectl apply -f -
+        kubectl expose deployment productpage --port=9080
     - name: Deploy Details
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
-        kubectl create deployment $app --image=docker.pkg.github.com/$GITHUB_REPOSITORY/details:$sha --dry-run -o yaml | kubectl apply -f -    
+        kubectl create deployment details --image=docker.pkg.github.com/$GITHUB_REPOSITORY/details:$sha --dry-run -o yaml | kubectl apply -f -    
+        kubectl expose deployment details --port=9080
     - name: Deploy Ratings
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
-        kubectl create deployment $app --image=docker.pkg.github.com/$GITHUB_REPOSITORY/ratings:$sha --dry-run -o yaml | kubectl apply -f -    
+        kubectl create deployment ratings --image=docker.pkg.github.com/$GITHUB_REPOSITORY/ratings:$sha --dry-run -o yaml | kubectl apply -f -    
+        kubectl expose deployment ratings --port=9080
     - name: Deploy Reviews
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
-        kubectl create deployment $app --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha --dry-run -o yaml | kubectl apply -f -
+        kubectl create deployment reviews --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha --dry-run -o yaml | kubectl apply -f -
+        kubectl expose deployment reviews --port=9080
     - name: Sleep for 60 seconds
       uses: jakejarvis/wait-action@master
       with:
