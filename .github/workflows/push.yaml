@@ -116,3 +116,30 @@ jobs:
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
         kubectl create deployment $app --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha --dry-run -o yaml | kubectl apply -f -
+    - name: Sleep for 60 seconds
+      uses: jakejarvis/wait-action@master
+      with:
+        time: '60s'
+    - name: Check
+      run: |
+        kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
+        kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "William Shakespeare"
+        kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "Reviewer1"
+  
+#   test:
+#     runs-on: ubuntu-latest
+#     needs: [deploy]
+#     steps:
+#     - name: Sleep for 60 seconds
+#       uses: jakejarvis/wait-action@master
+#       with:
+#         time: '60s'
+#     - name: Check
+#       run: |
+#         export KUBECONFIG="$(kind get kubeconfig-path)"
+#         kubectl get pods --all-namespaces
+#         kubectl get pods -o yaml
+#         kubectl get svc --all-namespaces
+#         kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "<title>.*</title>"
+#         kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "William Shakespeare"
+#         kubectl exec -it $(kubectl get pod -l app=ratings -o jsonpath='{.items[0].metadata.name}') -c ratings -- curl productpage:9080/productpage | grep -o "Reviewer1"
