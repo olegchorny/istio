@@ -69,7 +69,38 @@ jobs:
         app="${GITHUB_REPOSITORY#*/}"
         docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
         docker push docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha
-        
+  build_reviews_v2:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        cd $GITHUB_WORKSPACE/samples/bookinfo/src/reviews && gradle build
+        docker build --build-arg service_version=v2 --build-arg enable_ratings=true -t docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v2:$sha $GITHUB_WORKSPACE/samples/bookinfo/src/reviews/reviews-wlpcfg
+    - name: Push 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
+        docker push docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v2:$sha        
+  build_reviews_v3:
+    runs-on: ubuntu-latest 
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        cd $GITHUB_WORKSPACE/samples/bookinfo/src/reviews && gradle build
+        docker build --build-arg service_version=v3 --build-arg enable_ratings=true --build-arg star_color=red -t docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v2:$sha $GITHUB_WORKSPACE/samples/bookinfo/src/reviews/reviews-wlpcfg
+    - name: Push 
+      run: |
+        sha=${GITHUB_SHA:0:7}
+        app="${GITHUB_REPOSITORY#*/}"
+        docker login docker.pkg.github.com -u ${{ secrets.REGISTRY_USERNAME }} -p ${{ secrets.REGISTRY_PASSWORD }}
+        docker push docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v3:$sha        
   deploy:
     runs-on: ubuntu-latest
     needs: [build_productpage, build_reviews, build_details, build_ratings]
@@ -121,7 +152,7 @@ jobs:
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
-        kubectl create deployment reviews --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha --dry-run -o yaml | kubectl apply -f -
+        kubectl create deployment reviews --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v3:$sha --dry-run -o yaml | kubectl apply -f -
         kubectl expose deployment reviews --port=9080 --dry-run -o yaml | kubectl apply -f -
     - name: Sleep for 60 seconds
       uses: jakejarvis/wait-action@master
