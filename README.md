@@ -96,7 +96,7 @@ extensions to the [Envoy proxy](https://github.com/envoyproxy/envoy) (in the for
 Envoy filters), that allow the proxy to delegate policy enforcement
 decisions to Mixer.
 
-## Issue management
+## Issue management 
 
 We use GitHub combined with ZenHub to track all of our bugs and feature requests. Each issue we track has a variety of metadata:
 
