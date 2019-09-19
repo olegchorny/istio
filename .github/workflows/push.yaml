@@ -5,6 +5,7 @@ on:
     - master
     paths:
     - 'samples/bookinfo/src/*'
+    - '.github/workflows/*'
 
 jobs:
   build_productpage:
