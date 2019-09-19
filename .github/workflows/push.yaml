@@ -152,9 +152,9 @@ jobs:
       run: |
         sha=${GITHUB_SHA:0:7}
         app="${GITHUB_REPOSITORY#*/}"
-        kubectl create deployment reviews --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha -l app=reviews --dry-run -o yaml | kubectl apply -f -
-        kubectl create deployment reviews-v2 --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v2:$sha -l app=reviews --dry-run -o yaml | kubectl apply -f -
-        kubectl create deployment reviews-v3 --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v3:$sha -l app=reviews --dry-run -o yaml | kubectl apply -f -
+        kubectl run reviews --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews:$sha -l app=reviews --dry-run -o yaml | kubectl apply -f -
+        kubectl run reviews-v2 --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v2:$sha -l app=reviews --dry-run -o yaml | kubectl apply -f -
+        kubectl run reviews-v3 --image=docker.pkg.github.com/$GITHUB_REPOSITORY/reviews-v3:$sha -l app=reviews --dry-run -o yaml | kubectl apply -f -
         kubectl expose deployment reviews --port=9080 --dry-run -o yaml | kubectl apply -f -
     - name: Sleep for 60 seconds
       uses: jakejarvis/wait-action@master
