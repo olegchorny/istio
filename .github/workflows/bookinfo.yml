@@ -3,7 +3,8 @@ name: Bookinfo
 on:
   pull_request:
   push:
-    branch: '!master'
+    branch: 
+    - '!master'
 
 jobs:
   build:
