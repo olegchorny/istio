@@ -3,7 +3,7 @@ name: Bookinfo
 on:
   pull_request:
     paths:
-    - 'samples/bookinfo/src/*'
+    - 'samples/bookinfo/src/*/*'
     - '.github/workflows/*'
 
 jobs:
