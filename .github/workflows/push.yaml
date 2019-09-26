@@ -4,7 +4,7 @@ on:
     branches:
     - master
     paths:
-    - 'samples/bookinfo/src/*'
+    - 'samples/bookinfo/src/*/*'
     - '.github/workflows/*'
 
 jobs:
